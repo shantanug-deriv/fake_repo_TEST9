@@ -1,17 +1,37 @@
+
 version: 2.1
 orbs:
   ggshield: gitguardian/ggshield@1.1.4
 
-jobs:
-  ggshield-scan:
-    executor: ggshield/default
-    steps:
-      - checkout
-      - ggshield/scan:
-          base_revision: << pipeline.git.base_revision >>
-          revision: << pipeline.git.revision >>
-
 workflows:
   main:
     jobs:
-      - ggshield-scan
+      - scan:
+          name: ggshield-scan # best practice is to name each orb job
+          base_revision: << pipeline.git.base_revision >>
+          revision: <<pipeline.git.revision>>
+jobs:
+  scan:
+    parameters:
+      base_revision:
+        description: |
+          ID of the first commit to scan. Leave empty to only scan the latest
+          commit.
+        type: string
+        default: ""
+      revision:
+        description: ID of the last commit to scan.
+        type: string
+      tag:
+        description: |
+          Pick a specific gitguardian/ggshield image variant:
+          https://hub.docker.com/r/gitguardian/ggshield/tags
+        default: latest
+        type: string
+    docker:
+      - image: gitguardian/ggshield:<<parameters.tag>>
+    environment:
+      CIRCLE_RANGE: <<parameters.base_revision>>...<<parameters.revision>>
+    steps:
+      - checkout
+      - run: ggshield secret scan -v ci
