@@ -1,5 +1,4 @@
 version: 2.1
-
 orbs:
   ggshield: gitguardian/ggshield@1.1.4
 
