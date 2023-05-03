@@ -6,8 +6,7 @@ orbs:
 jobs:
       - ggshield/scan:
           name: ggshield-scan # best practice is to name each orb job
-          base_revision: << pipeline.git.base_revision >>
-          revision: <<pipeline.git.revision>>
+          revision: a6cbd42e244c1eee5bee47507e13505c29c27509 
 
 workflows:
     example-workflow:
