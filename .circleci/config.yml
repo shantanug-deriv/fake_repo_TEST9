@@ -1,15 +1,31 @@
 version: 2.1
 
+orbs:
+  trufflehog: gcr.io/gcp-runtimes/container-structure-test/trufflehog@sha256:aa6a0ca382f9a6c79a910d731ff2f0f5a5e5bdf4738d5f0a3ba3dc9f9c5f8d0d
+
+workflows:
+  build:
+    jobs:
+      - trufflehog/scan:
+          directory: .
+
 jobs:
-  trufflehog-scan:
+  trufflehog/scan:
+    parameters:
+      directory:
+        type: string
+        default: .
     docker:
-      - image: python:3.7.9
+      - image: circleci/python:3.8.12
     steps:
       - checkout
       - run:
           name: Install TruffleHog
-          command: pip install trufflehog
-      - run:
-          name: Scan for Secrets
           command: |
-            trufflehog filesystem ./
+            pip install trufflehog
+      - run:
+          name: Run TruffleHog Scan
+          command: trufflehog filesystem ./ --json > trufflehog_scan.json
+      - store_artifacts:
+          path: trufflehog_scan.json
+          destination: trufflehog-scan
