@@ -34,4 +34,4 @@ jobs:
       CIRCLE_RANGE: <<parameters.base_revision>>...<<parameters.revision>>
     steps:
       - checkout
-      - run: ggshield secret scan path .
+      - run: ggshield secret scan path . --recursive 
