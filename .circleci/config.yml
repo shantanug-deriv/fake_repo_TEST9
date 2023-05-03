@@ -1,18 +1,18 @@
+version: 2.1
+
 orbs:
   ggshield: gitguardian/ggshield@1.1.4
 
-workflows:
-  main:
-    jobs:
-      - ggshield/scan:
-          name: ggshield-scan # best practice is to name each orb job
-          base_revision: << pipeline.git.base_revision >>
-          revision: <<pipeline.git.revision>>
 jobs:
-  scan-secrets:
+  ggshield-scan:
     executor: ggshield/default
     steps:
       - checkout
       - ggshield/scan:
           base_revision: << pipeline.git.base_revision >>
           revision: << pipeline.git.revision >>
+
+workflows:
+  main:
+    jobs:
+      - ggshield-scan
