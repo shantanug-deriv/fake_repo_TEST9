@@ -1,8 +1,5 @@
-version: 2.1
-
 orbs:
-  ggshield: gitguardian/ggshield
-
+ggshield: gitguardian/ggshield
 workflows:
   main:
     jobs:
