@@ -1,31 +1,37 @@
-version: 2.1
 
+version: 2.1
 orbs:
-  trufflehog: gcr.io/gcp-runtimes/container-structure-test/trufflehog@sha256:aa6a0ca382f9a6c79a910d731ff2f0f5a5e5bdf4738d5f0a3ba3dc9f9c5f8d0d
+  ggshield: gitguardian/ggshield@1.1.4
 
 workflows:
-  build:
+  main:
     jobs:
-      - trufflehog/scan:
-          directory: .
-
+      - scan:
+          name: ggshield-scan # best practice is to name each orb job
+          base_revision: << pipeline.git.base_revision >>
+          revision: <<pipeline.git.revision>>
 jobs:
-  trufflehog/scan:
+  scan:
     parameters:
-      directory:
+      base_revision:
+        description: |
+          ID of the first commit to scan. Leave empty to only scan the latest
+          commit.
         type: string
-        default: .
+        default: ""
+      revision:
+        description: ID of the last commit to scan.
+        type: string
+      tag:
+        description: |
+          Pick a specific gitguardian/ggshield image variant:
+          https://hub.docker.com/r/gitguardian/ggshield/tags
+        default: latest
+        type: string
     docker:
-      - image: circleci/python:3.8.12
+      - image: gitguardian/ggshield:<<parameters.tag>>
+    environment:
+      CIRCLE_RANGE: <<parameters.base_revision>>...<<parameters.revision>>
     steps:
       - checkout
-      - run:
-          name: Install TruffleHog
-          command: |
-            pip install trufflehog
-      - run:
-          name: Run TruffleHog Scan
-          command: trufflehog filesystem ./ --json > trufflehog_scan.json
-      - store_artifacts:
-          path: trufflehog_scan.json
-          destination: trufflehog-scan
+      - run: ggshield secret scan path . --recursive -y
