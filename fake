@@ -1,5 +1,6 @@
-aws_access_key_id=AKIASS72XWPNT22ZFB5N
-aws_secret_access_key=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
+AWS ACLOUDGURU Creds for testing secret detection time.
+aws_access_key_id=AKIASLEPEFMTEF3JEWSP
+aws_secret_access_key=85hbxNmIPEmbu4CSw6V7NDLpC1kASCM44KhkMdEb
 
 #Invalid CRED KEY FOR TESTINGs
 #FAKE CHANGE 12
